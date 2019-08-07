@@ -5,11 +5,17 @@ import com.softwareverde.logging.log.AnnotatedLog;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Logger {
+    protected static final String NULL = "null";
+
     public static LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
     public static Log LOG = AnnotatedLog.getInstance();
 
     public static LoggerInstance getInstance(final Class<?> clazz) {
         return new LoggerInstance(clazz);
+    }
+
+    protected static String stringify(final Object object) {
+        return (object == null ? NULL : object.toString());
     }
 
     protected static final ReentrantReadWriteLock.ReadLock _readLock;
@@ -113,9 +119,9 @@ public class Logger {
 
     // TRACE
 
-    public static void trace(final String message) {
+    public static void trace(final Object message) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.TRACE, callingClass, message, null);
+        Logger.log(LogLevel.TRACE, callingClass, Logger.stringify(message), null);
     }
 
     public static void trace(final Throwable exception) {
@@ -123,28 +129,28 @@ public class Logger {
         Logger.log(LogLevel.TRACE, callingClass, null, exception);
     }
 
-    public static void trace(final String message, final Throwable exception) {
+    public static void trace(final Object message, final Throwable exception) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.TRACE, callingClass, message, exception);
+        Logger.log(LogLevel.TRACE, callingClass, Logger.stringify(message), exception);
     }
 
-    public static void trace(final Class<?> callingClass, final String message) {
-        Logger.log(LogLevel.TRACE, callingClass, message, null);
+    public static void trace(final Class<?> callingClass, final Object message) {
+        Logger.log(LogLevel.TRACE, callingClass, Logger.stringify(message), null);
     }
 
     public static void trace(final Class<?> callingClass, final Throwable exception) {
         Logger.log(LogLevel.TRACE, callingClass, null, exception);
     }
 
-    public static void trace(final Class<?> callingClass, final String message, final Throwable exception) {
-        Logger.log(LogLevel.TRACE, callingClass, message, exception);
+    public static void trace(final Class<?> callingClass, final Object message, final Throwable exception) {
+        Logger.log(LogLevel.TRACE, callingClass, Logger.stringify(message), exception);
     }
 
     // DEBUG
 
-    public static void debug(final String message) {
+    public static void debug(final Object message) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.DEBUG, callingClass, message, null);
+        Logger.log(LogLevel.DEBUG, callingClass, Logger.stringify(message), null);
     }
 
     public static void debug(final Throwable exception) {
@@ -152,28 +158,28 @@ public class Logger {
         Logger.log(LogLevel.DEBUG, callingClass, null, exception);
     }
 
-    public static void debug(final String message, final Throwable exception) {
+    public static void debug(final Object message, final Throwable exception) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.DEBUG, callingClass, message, exception);
+        Logger.log(LogLevel.DEBUG, callingClass, Logger.stringify(message), exception);
     }
 
-    public static void debug(final Class<?> callingClass, final String message) {
-        Logger.log(LogLevel.DEBUG, callingClass, message, null);
+    public static void debug(final Class<?> callingClass, final Object message) {
+        Logger.log(LogLevel.DEBUG, callingClass, Logger.stringify(message), null);
     }
 
     public static void debug(final Class<?> callingClass, final Throwable exception) {
         Logger.log(LogLevel.DEBUG, callingClass, null, exception);
     }
 
-    public static void debug(final Class<?> callingClass, final String message, final Throwable exception) {
-        Logger.log(LogLevel.DEBUG, callingClass, message, exception);
+    public static void debug(final Class<?> callingClass, final Object message, final Throwable exception) {
+        Logger.log(LogLevel.DEBUG, callingClass, Logger.stringify(message), exception);
     }
 
     // INFO
 
-    public static void info(final String message) {
+    public static void info(final Object message) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.INFO, callingClass, message, null);
+        Logger.log(LogLevel.INFO, callingClass, Logger.stringify(message), null);
     }
 
     public static void info(final Throwable exception) {
@@ -181,28 +187,28 @@ public class Logger {
         Logger.log(LogLevel.INFO, callingClass, null, exception);
     }
 
-    public static void info(final String message, final Throwable exception) {
+    public static void info(final Object message, final Throwable exception) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.INFO, callingClass, message, exception);
+        Logger.log(LogLevel.INFO, callingClass, Logger.stringify(message), exception);
     }
 
-    public static void info(final Class<?> callingClass, final String message) {
-        Logger.log(LogLevel.INFO, callingClass, message, null);
+    public static void info(final Class<?> callingClass, final Object message) {
+        Logger.log(LogLevel.INFO, callingClass, Logger.stringify(message), null);
     }
 
     public static void info(final Class<?> callingClass, final Throwable exception) {
         Logger.log(LogLevel.INFO, callingClass, null, exception);
     }
 
-    public static void info(final Class<?> callingClass, final String message, final Throwable exception) {
-        Logger.log(LogLevel.INFO, callingClass, message, exception);
+    public static void info(final Class<?> callingClass, final Object message, final Throwable exception) {
+        Logger.log(LogLevel.INFO, callingClass, Logger.stringify(message), exception);
     }
 
     // WARN
 
-    public static void warn(final String message) {
+    public static void warn(final Object message) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.WARN, callingClass, message, null);
+        Logger.log(LogLevel.WARN, callingClass, Logger.stringify(message), null);
     }
 
     public static void warn(final Throwable exception) {
@@ -210,28 +216,28 @@ public class Logger {
         Logger.log(LogLevel.WARN, callingClass, null, exception);
     }
 
-    public static void warn(final String message, final Throwable exception) {
+    public static void warn(final Object message, final Throwable exception) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.WARN, callingClass, message, exception);
+        Logger.log(LogLevel.WARN, callingClass, Logger.stringify(message), exception);
     }
 
-    public static void warn(final Class<?> callingClass, final String message) {
-        Logger.log(LogLevel.WARN, callingClass, message, null);
+    public static void warn(final Class<?> callingClass, final Object message) {
+        Logger.log(LogLevel.WARN, callingClass, Logger.stringify(message), null);
     }
 
     public static void warn(final Class<?> callingClass, final Throwable exception) {
         Logger.log(LogLevel.WARN, callingClass, null, exception);
     }
 
-    public static void warn(final Class<?> callingClass, final String message, final Throwable exception) {
-        Logger.log(LogLevel.WARN, callingClass, message, exception);
+    public static void warn(final Class<?> callingClass, final Object message, final Throwable exception) {
+        Logger.log(LogLevel.WARN, callingClass, Logger.stringify(message), exception);
     }
 
     // ERROR
 
-    public static void error(final String message) {
+    public static void error(final Object message) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.ERROR, callingClass, message, null);
+        Logger.log(LogLevel.ERROR, callingClass, Logger.stringify(message), null);
     }
 
     public static void error(final Throwable exception) {
@@ -239,21 +245,21 @@ public class Logger {
         Logger.log(LogLevel.ERROR, callingClass, null, exception);
     }
 
-    public static void error(final String message, final Throwable exception) {
+    public static void error(final Object message, final Throwable exception) {
         final Class<?> callingClass = Logger.getCallingClass();
-        Logger.log(LogLevel.ERROR, callingClass, message, exception);
+        Logger.log(LogLevel.ERROR, callingClass, Logger.stringify(message), exception);
     }
 
-    public static void error(final Class<?> callingClass, final String message) {
-        Logger.log(LogLevel.ERROR, callingClass, message, null);
+    public static void error(final Class<?> callingClass, final Object message) {
+        Logger.log(LogLevel.ERROR, callingClass, Logger.stringify(message), null);
     }
 
     public static void error(final Class<?> callingClass, final Throwable exception) {
         Logger.log(LogLevel.ERROR, callingClass, null, exception);
     }
 
-    public static void error(final Class<?> callingClass, final String message, final Throwable exception) {
-        Logger.log(LogLevel.ERROR, callingClass, message, exception);
+    public static void error(final Class<?> callingClass, final Object message, final Throwable exception) {
+        Logger.log(LogLevel.ERROR, callingClass, Logger.stringify(message), exception);
     }
 
     protected Logger() { }
