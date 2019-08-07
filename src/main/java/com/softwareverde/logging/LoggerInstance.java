@@ -7,63 +7,63 @@ public class LoggerInstance {
         _class = clazz;
     }
 
+    public void trace(final String message) {
+        Logger.log(LogLevel.TRACE, _class, message, null);
+    }
+
+    public void trace(final Throwable exception) {
+        Logger.log(LogLevel.TRACE, _class, null, exception);
+    }
+
+    public void trace(final String message, final Throwable exception) {
+        Logger.log(LogLevel.TRACE, _class, message, exception);
+    }
+
     public void debug(final String message) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.DEBUG, classLogLevel, message, null);
+        Logger.log(LogLevel.DEBUG, _class, message, null);
     }
 
     public void debug(final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.DEBUG, classLogLevel, null, exception);
+        Logger.log(LogLevel.DEBUG, _class, null, exception);
     }
 
     public void debug(final String message, final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.DEBUG, classLogLevel, message, exception);
+        Logger.log(LogLevel.DEBUG, _class, message, exception);
     }
 
     public void info(final String message) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.INFO, classLogLevel, message, null);
+        Logger.log(LogLevel.INFO, _class, message, null);
     }
 
     public void info(final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.INFO, classLogLevel, null, exception);
+        Logger.log(LogLevel.INFO, _class, null, exception);
     }
 
     public void info(final String message, final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.INFO, classLogLevel, message, exception);
+        Logger.log(LogLevel.INFO, _class, message, exception);
     }
 
     public void warn(final String message) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.WARN, classLogLevel, message, null);
+        Logger.log(LogLevel.WARN, _class, message, null);
     }
 
     public void warn(final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.WARN, classLogLevel, null, exception);
+        Logger.log(LogLevel.WARN, _class, null, exception);
     }
 
     public void warn(final String message, final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.WARN, classLogLevel, message, exception);
+        Logger.log(LogLevel.WARN, _class, message, exception);
     }
 
     public void error(final String message) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.ERROR, classLogLevel, message, null);
+        Logger.log(LogLevel.ERROR, _class, message, null);
     }
 
     public void error(final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.ERROR, classLogLevel, null, exception);
+        Logger.log(LogLevel.ERROR, _class, null, exception);
     }
 
     public void error(final String message, final Throwable exception) {
-        final LogLevel classLogLevel = Logger.getLogLevel(_class);
-        Logger.log(LogLevel.ERROR, classLogLevel, message, exception);
+        Logger.log(LogLevel.ERROR, _class, message, exception);
     }
 }

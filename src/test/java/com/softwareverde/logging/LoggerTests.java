@@ -25,7 +25,7 @@ public class LoggerTests {
         protected final ArrayList<Message> _messages = new ArrayList<Message>();
 
         @Override
-        public void write(final LogLevel logLevel, final String nullableMessage, final Throwable nullableException) {
+        public void write(final Class<?> callingClass, final LogLevel logLevel, final String nullableMessage, final Throwable nullableException) {
             _messages.add(new Message(logLevel, nullableMessage, nullableException));
         }
 
