@@ -17,6 +17,28 @@ public interface Package {
         return rootPackage;
     }
 
+    /**
+     * Returns the class of the provided Class.
+     *  If clazz is an anonymous class, then its parent class name is returned.
+     *  i.e. "com.softwareverde.Package$1", where "$1" is the anonymous class, returns as "com.softwareverde.Package".
+     *  If the class name has a "$" in its name, it is truncated.
+     */
+    static String getClassName(final Class<?> clazz) {
+        final String className;
+        {
+            final String canonicalName = clazz.getCanonicalName();
+            if (canonicalName != null) {
+                className = canonicalName;
+            }
+            else {
+                className = clazz.getName();
+            }
+        }
+
+        final int anonymousSubclassIndex = className.indexOf("$");
+        return (anonymousSubclassIndex < 0 ? className : className.substring(0, anonymousSubclassIndex));
+    }
+
     Package getRoot();
 
     Boolean hasParent();

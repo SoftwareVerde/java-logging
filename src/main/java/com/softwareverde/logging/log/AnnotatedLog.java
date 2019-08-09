@@ -1,6 +1,7 @@
 package com.softwareverde.logging.log;
 
 import com.softwareverde.logging.LogLevel;
+import com.softwareverde.util.Package;
 
 public class AnnotatedLog extends AbstractLog {
     protected static final Object INSTANCE_MUTEX = new Object();
@@ -50,7 +51,7 @@ public class AnnotatedLog extends AbstractLog {
     }
 
     protected String _getClassAnnotation(final Class<?> callingClass) {
-        return callingClass.getCanonicalName();
+        return Package.getClassName(callingClass);
     }
 
     @Override

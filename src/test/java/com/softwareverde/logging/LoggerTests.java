@@ -1,10 +1,13 @@
 package com.softwareverde.logging;
 
+import com.softwareverde.logging.log.AnnotatedLog;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,42 @@ public class LoggerTests {
         }
 
         public List<Message> getMessages() {
+            return _messages;
+        }
+    }
+
+    public static class AnnotatedDebugLog extends AnnotatedLog {
+        protected static class ListWriter implements Writer {
+            List<String> _messages;
+
+            @Override
+            public void write(final String string) {
+                _messages.add(string);
+            }
+
+            @Override
+            public void write(final Throwable exception) {
+                final StringWriter stringWriter = new StringWriter();
+                final PrintWriter printWriter = new PrintWriter(stringWriter);
+                exception.printStackTrace(printWriter);
+
+                _messages.add(stringWriter.toString());
+            }
+
+            public void setList(final List<String> messages) {
+                _messages = messages;
+            }
+        }
+
+        protected final ArrayList<String> _messages = new ArrayList<String>();
+
+        public AnnotatedDebugLog() {
+            super(new ListWriter(), new ListWriter());
+            ((ListWriter) _outWriter).setList(_messages);
+            ((ListWriter) _errWriter).setList(_messages);
+        }
+
+        public List<String> getMessages() {
             return _messages;
         }
     }
@@ -242,5 +281,103 @@ public class LoggerTests {
 
         Assert.assertEquals("ERROR", messages.get(1).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(1).logLevel);
+    }
+
+    static class StaticInnerClass {
+        void log(final String message) {
+            Logger.info(message);
+        }
+    }
+
+    @Test
+    public void should_log_messages_from_static_inner_class() {
+        // Setup
+        final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
+        Logger.LOG = debugLog;
+        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+
+        final StaticInnerClass staticInnerClass = new StaticInnerClass();
+
+        // Action
+        staticInnerClass.log("Message.");
+
+        // Assert
+        final List<String> messages = debugLog.getMessages();
+
+        Assert.assertEquals(1, messages.size());
+
+        final String message = messages.get(0);
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message."));
+    }
+
+    @Test
+    public void should_log_messages_from_anonymous_class() {
+        // Setup
+        final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
+        Logger.LOG = debugLog;
+        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+
+        // Action
+        (new Runnable() {
+            @Override
+            public void run() {
+                Logger.info("Message.");
+            }
+        }).run();
+
+        // Assert
+        final List<String> messages = debugLog.getMessages();
+
+        Assert.assertEquals(1, messages.size());
+
+        final String message = messages.get(0);
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message."));
+    }
+
+    @Test
+    public void should_log_messages_from_lambda() {
+        // Setup
+        final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
+        Logger.LOG = debugLog;
+        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+
+        // Action
+        final Runnable lambda = (() -> {
+            Logger.info("Message.");
+        });
+        lambda.run();
+
+        // Assert
+        final List<String> messages = debugLog.getMessages();
+
+        Assert.assertEquals(1, messages.size());
+
+        final String message = messages.get(0);
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message."));
+    }
+
+    static class $Ignored$Symbol extends StaticInnerClass { }
+
+    @Test
+    public void should_log_messages_from_static_inner_with_symbol() {
+        // Packages/Classes with "$" in their name are truncated before the symbol...
+
+        // Setup
+        final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
+        Logger.LOG = debugLog;
+        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+
+        final $Ignored$Symbol staticInnerClass = new $Ignored$Symbol();
+
+        // Action
+        staticInnerClass.log("Message.");
+
+        // Assert
+        final List<String> messages = debugLog.getMessages();
+
+        Assert.assertEquals(1, messages.size());
+
+        final String message = messages.get(0);
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message."));
     }
 }

@@ -43,6 +43,8 @@ public enum LogLevel {
      */
     ERROR(5);
 
+    public static final LogLevel ON = LogLevel.TRACE;
+
     public static LogLevel fromValue(final Integer value) {
         for (final LogLevel logLevel : LogLevel.values()) {
             if (logLevel.value == value) {

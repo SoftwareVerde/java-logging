@@ -1,6 +1,7 @@
 package com.softwareverde.logging;
 
 import com.softwareverde.logging.log.AnnotatedLog;
+import com.softwareverde.util.Package;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -36,7 +37,7 @@ public class Logger {
         final LogLevel classLogLevel;
         _readLock.lock();
         try {
-            final LogLevel nullableClassLogLevel = _rootPackage.getLogLevel(callingClass.getCanonicalName());
+            final LogLevel nullableClassLogLevel = _rootPackage.getLogLevel(Package.getClassName(callingClass));
             classLogLevel = (nullableClassLogLevel == null ? DEFAULT_LOG_LEVEL : nullableClassLogLevel);
         }
         finally {
@@ -58,7 +59,7 @@ public class Logger {
 
         _readLock.lock();
         try {
-            return _rootPackage.getLogLevel(callingClass.getCanonicalName());
+            return _rootPackage.getLogLevel(Package.getClassName(callingClass));
         }
         finally {
             _readLock.unlock();
@@ -68,7 +69,7 @@ public class Logger {
     public static LogLevel getLogLevel(final Class<?> callingClass) {
         _readLock.lock();
         try {
-            return _rootPackage.getLogLevel(callingClass.getCanonicalName());
+            return _rootPackage.getLogLevel(Package.getClassName(callingClass));
         }
         finally {
             _readLock.unlock();
@@ -113,8 +114,11 @@ public class Logger {
      * Flushes the log, if the log is buffered.
      *  In most cases, this operation does nothing.
      */
-    public void flush() {
-        LOG.flush();
+    public static void flush() {
+        final Log log = Logger.LOG;
+        if (log == null) { return; }
+
+        log.flush();
     }
 
     // TRACE
