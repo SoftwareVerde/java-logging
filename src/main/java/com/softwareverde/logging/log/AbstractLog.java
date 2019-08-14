@@ -64,11 +64,10 @@ public abstract class AbstractLog implements Log {
         }
     }
 
-    /**
-     * Does nothing.
-     */
     @Override
-    public void flush() { }
+    public void flush() {
+        _flush();
+    }
 
     @Override
     protected void finalize() throws Throwable {

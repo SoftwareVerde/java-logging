@@ -3,7 +3,6 @@ package com.softwareverde.logging.log;
 import java.io.*;
 import java.nio.charset.Charset;
 
-
 public class BufferedSystemWriter implements AbstractLog.Writer {
     public enum Type {
         SYSTEM_OUT, SYSTEM_ERR
