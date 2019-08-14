@@ -76,6 +76,8 @@ public class LoggerTests {
     public static final LogLevel ORIGINAL_LOG_LEVEL = Logger.DEFAULT_LOG_LEVEL;
     public static final Log ORIGINAL_LOG = Logger.LOG;
 
+    protected static final String NEWLINE = System.lineSeparator();
+
     @Before
     public void setUp() {
         Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
@@ -307,7 +309,7 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message."));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
     }
 
     @Test
@@ -331,7 +333,7 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message."));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message." + NEWLINE));
     }
 
     @Test
@@ -353,7 +355,7 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message."));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message." + NEWLINE));
     }
 
     static class $Ignored$Symbol extends StaticInnerClass { }
@@ -378,6 +380,6 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message."));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
     }
 }

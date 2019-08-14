@@ -93,6 +93,8 @@ public class AnnotatedLog extends AbstractLog {
             separator = SEPARATOR;
         }
 
+        stringBuilder.append(_lineSeparator);
+
         writer.write(stringBuilder.toString());
     }
 

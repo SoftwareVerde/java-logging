@@ -16,6 +16,7 @@ public abstract class AbstractLog implements Log {
 
     protected final Writer _outWriter;
     protected final Writer _errWriter;
+    protected String _lineSeparator = System.lineSeparator();
 
     protected void _flush() {
         _outWriter.flush();
@@ -23,7 +24,7 @@ public abstract class AbstractLog implements Log {
     }
 
     protected void _writeMessage(final Class<?> callingClass, final LogLevel logLevel, final String message, final Writer writer) {
-        writer.write(message);
+        writer.write(message + _lineSeparator);
     }
 
     protected void _writeException(final Class<?> callingClass, final LogLevel logLevel, final Throwable exception, final Writer writer) {
