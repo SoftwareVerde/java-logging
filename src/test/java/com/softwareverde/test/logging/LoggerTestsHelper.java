@@ -1,4 +1,6 @@
-package com.softwareverde.logging;
+package com.softwareverde.test.logging;
+
+import com.softwareverde.logging.Logger;
 
 public class LoggerTestsHelper {
     public static void debug(final String message) {

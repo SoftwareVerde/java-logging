@@ -1,5 +1,8 @@
-package com.softwareverde.logging;
+package com.softwareverde.test.logging; // Needs to be outside of the com.softwareverde.logging package to trigger the proper stack stace...
 
+import com.softwareverde.logging.Log;
+import com.softwareverde.logging.LogLevel;
+import com.softwareverde.logging.Logger;
 import com.softwareverde.logging.log.AnnotatedLog;
 import org.junit.After;
 import org.junit.Assert;
@@ -309,7 +312,7 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.test.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
     }
 
     @Test
@@ -333,7 +336,7 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message." + NEWLINE));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.test.logging.LoggerTests] Message." + NEWLINE));
     }
 
     @Test
@@ -355,7 +358,7 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests] Message." + NEWLINE));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.test.logging.LoggerTests] Message." + NEWLINE));
     }
 
     static class $Ignored$Symbol extends StaticInnerClass { }
@@ -380,6 +383,6 @@ public class LoggerTests {
         Assert.assertEquals(1, messages.size());
 
         final String message = messages.get(0);
-        Assert.assertTrue(message.endsWith(" [com.softwareverde.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
+        Assert.assertTrue(message.endsWith(" [com.softwareverde.test.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
     }
 }

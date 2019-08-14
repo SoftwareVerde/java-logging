@@ -51,11 +51,11 @@ public class Logger {
     }
 
     protected static Class<?> getCallingClass() {
-        return _stackTraceManager.getCallingClass(StackTraceManager.Offset.PARENT + 1);
+        return _stackTraceManager.getCallingClass();
     }
 
     public static LogLevel getLogLevel() {
-        final Class<?> callingClass = _stackTraceManager.getCallingClass(StackTraceManager.Offset.PARENT);
+        final Class<?> callingClass = _stackTraceManager.getCallingClass();
 
         _readLock.lock();
         try {
@@ -270,16 +270,18 @@ public class Logger {
 }
 
 final class StackTraceManager extends java.lang.SecurityManager {
-    public static class Offset {
-        public static final int THIS = 1;
-        public static final int PARENT = 2;
-    }
+    public static final String LOGGING_PACKAGE_NAME = "com.softwareverde.logging";
 
 	public final Class<?> getCallingClass() {
-		return super.getClassContext()[Offset.PARENT];
-	}
+        final Class<?>[] callingClasses = super.getClassContext();
+        for (int i = 0; i < callingClasses.length; ++i) {
+            final Class<?> callingClass = callingClasses[i];
+            final String packageName = Package.getClassName(callingClass);
+            if (! packageName.startsWith(LOGGING_PACKAGE_NAME)) {
+                return callingClass;
+            }
+        }
 
-	public final Class<?> getCallingClass(final int depth) {
-		return super.getClassContext()[depth];
+		return callingClasses[callingClasses.length - 1];
 	}
 }
