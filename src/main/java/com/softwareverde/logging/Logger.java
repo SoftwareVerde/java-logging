@@ -268,20 +268,3 @@ public class Logger {
 
     protected Logger() { }
 }
-
-final class StackTraceManager extends java.lang.SecurityManager {
-    public static final String LOGGING_PACKAGE_NAME = "com.softwareverde.logging";
-
-	public final Class<?> getCallingClass() {
-        final Class<?>[] callingClasses = super.getClassContext();
-        for (int i = 0; i < callingClasses.length; ++i) {
-            final Class<?> callingClass = callingClasses[i];
-            final String packageName = Package.getClassName(callingClass);
-            if (! packageName.startsWith(LOGGING_PACKAGE_NAME)) {
-                return callingClass;
-            }
-        }
-
-		return callingClasses[callingClasses.length - 1];
-	}
-}
