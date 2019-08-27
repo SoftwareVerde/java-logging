@@ -1,6 +1,7 @@
 package com.softwareverde.test.logging; // Needs to be outside of the com.softwareverde.logging package to trigger the proper stack stace...
 
 import com.softwareverde.logging.Log;
+import com.softwareverde.logging.LogFactory;
 import com.softwareverde.logging.LogLevel;
 import com.softwareverde.logging.Logger;
 import com.softwareverde.logging.log.AnnotatedLog;
@@ -77,21 +78,21 @@ public class LoggerTests {
     }
 
     public static final LogLevel ORIGINAL_LOG_LEVEL = Logger.DEFAULT_LOG_LEVEL;
-    public static final Log ORIGINAL_LOG = Logger.LOG;
+    public static final LogFactory ORIGINAL_LOG_FACTORY = Logger.DEFAULT_LOG_FACTORY;
 
     protected static final String NEWLINE = System.lineSeparator();
 
     @Before
     public void setUp() {
         Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
-        Logger.LOG = ORIGINAL_LOG;
+        Logger.setLogFactory(ORIGINAL_LOG_FACTORY);
         Logger.clearLogLevels();
     }
 
     @After
     public void tearDown() {
         Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
-        Logger.LOG = ORIGINAL_LOG;
+        Logger.setLogFactory(ORIGINAL_LOG_FACTORY);
         Logger.clearLogLevels();
     }
 
@@ -99,7 +100,7 @@ public class LoggerTests {
     public void should_log_messages_with_debug_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.DEBUG;
 
         // Action
@@ -130,7 +131,7 @@ public class LoggerTests {
     public void should_not_log_messages_below_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
 
         // Action
@@ -155,7 +156,7 @@ public class LoggerTests {
     public void should_not_log_messages_with_OFF_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.OFF;
 
         // Action
@@ -174,7 +175,7 @@ public class LoggerTests {
     public void should_log_messages_if_package_set_above_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
 
         Logger.setLogLevel(LoggerTests.class, LogLevel.DEBUG);
@@ -214,7 +215,7 @@ public class LoggerTests {
         Logger.setLogLevel(LoggerTestsHelper.class, LogLevel.WARN);
 
         // Action
-        Logger.LOG = thisDebugLog;
+        Logger.setLog(thisDebugLog);
         {
             Logger.debug("THIS DEBUG");
             Logger.info("THIS INFO");
@@ -222,7 +223,7 @@ public class LoggerTests {
             Logger.error("THIS ERROR");
         }
 
-        Logger.LOG = helperDebugLog;
+        Logger.setLog(helperDebugLog);
         {
             LoggerTestsHelper.debug("HELPER DEBUG");
             LoggerTestsHelper.info("HELPER INFO");
@@ -264,7 +265,7 @@ public class LoggerTests {
     public void should_log_messages_if_parent_package_has_lower_log_levels() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.OFF;
 
         Logger.setLogLevel(LoggerTestsHelper.class, LogLevel.DEBUG); // NOTE: LoggerTestsHelper is not this class.
@@ -298,7 +299,7 @@ public class LoggerTests {
     public void should_log_messages_from_static_inner_class() {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         final StaticInnerClass staticInnerClass = new StaticInnerClass();
@@ -319,7 +320,7 @@ public class LoggerTests {
     public void should_log_messages_from_anonymous_class() {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         // Action
@@ -343,7 +344,7 @@ public class LoggerTests {
     public void should_log_messages_from_lambda() {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         // Action
@@ -369,7 +370,7 @@ public class LoggerTests {
 
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         final $Ignored$Symbol staticInnerClass = new $Ignored$Symbol();
