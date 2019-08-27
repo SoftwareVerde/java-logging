@@ -98,6 +98,40 @@ public class Logger {
         }
     }
 
+    protected static boolean isLogLevelEnabled(final LogLevel loggingThreshold, final Class<?> callingClass) {
+        LogLevel classLogLevel = Logger.getLogLevel(callingClass);
+        if (classLogLevel == null) {
+            classLogLevel = DEFAULT_LOG_LEVEL;
+        }
+        // using opposite order, since we're testing the passed-in threshold against the class's log level
+        return loggingThreshold.isLoggableWithThreshold(classLogLevel);
+    }
+
+    public static boolean isTraceEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.TRACE, callingClass);
+    }
+
+    public static boolean isDebugEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.DEBUG, callingClass);
+    }
+
+    public static boolean isInfoEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.INFO, callingClass);
+    }
+
+    public static boolean isWarnEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.WARN, callingClass);
+    }
+
+    public static boolean isErrorEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.ERROR, callingClass);
+    }
+
     public static void setLogLevel(final Class clazz, final LogLevel level) {
         final PackageLevel packageLogLevel = PackageLevel.fromClass(clazz, level);
 

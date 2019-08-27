@@ -114,15 +114,21 @@ public class LoggerTests {
 
         Assert.assertEquals(4, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+
+        Assert.assertTrue(Logger.isDebugEnabled());
         Assert.assertEquals("DEBUG", messages.get(0).message);
         Assert.assertEquals(LogLevel.DEBUG, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isInfoEnabled());
         Assert.assertEquals("INFO", messages.get(1).message);
         Assert.assertEquals(LogLevel.INFO, messages.get(1).logLevel);
 
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(2).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(2).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(3).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(3).logLevel);
     }
@@ -145,9 +151,15 @@ public class LoggerTests {
 
         Assert.assertEquals(2, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+        Assert.assertFalse(Logger.isDebugEnabled());
+        Assert.assertFalse(Logger.isInfoEnabled());
+
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(0).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(1).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(1).logLevel);
     }
@@ -169,6 +181,12 @@ public class LoggerTests {
         final List<DebugLog.Message> messages = debugLog.getMessages();
 
         Assert.assertEquals(0, messages.size());
+
+        Assert.assertFalse(Logger.isTraceEnabled());
+        Assert.assertFalse(Logger.isDebugEnabled());
+        Assert.assertFalse(Logger.isInfoEnabled());
+        Assert.assertFalse(Logger.isWarnEnabled());
+        Assert.assertFalse(Logger.isErrorEnabled());
     }
 
     @Test
@@ -191,15 +209,21 @@ public class LoggerTests {
 
         Assert.assertEquals(4, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+
+        Assert.assertTrue(Logger.isDebugEnabled());
         Assert.assertEquals("DEBUG", messages.get(0).message);
         Assert.assertEquals(LogLevel.DEBUG, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isInfoEnabled());
         Assert.assertEquals("INFO", messages.get(1).message);
         Assert.assertEquals(LogLevel.INFO, messages.get(1).logLevel);
 
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(2).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(2).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(3).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(3).logLevel);
     }
@@ -236,15 +260,21 @@ public class LoggerTests {
         {
             Assert.assertEquals(4, thisMessages.size());
 
+            Assert.assertFalse(Logger.isTraceEnabled());
+
+            Assert.assertTrue(Logger.isDebugEnabled());
             Assert.assertEquals("THIS DEBUG", thisMessages.get(0).message);
             Assert.assertEquals(LogLevel.DEBUG, thisMessages.get(0).logLevel);
 
+            Assert.assertTrue(Logger.isInfoEnabled());
             Assert.assertEquals("THIS INFO", thisMessages.get(1).message);
             Assert.assertEquals(LogLevel.INFO, thisMessages.get(1).logLevel);
 
+            Assert.assertTrue(Logger.isWarnEnabled());
             Assert.assertEquals("THIS WARN", thisMessages.get(2).message);
             Assert.assertEquals(LogLevel.WARN, thisMessages.get(2).logLevel);
 
+            Assert.assertTrue(Logger.isErrorEnabled());
             Assert.assertEquals("THIS ERROR", thisMessages.get(3).message);
             Assert.assertEquals(LogLevel.ERROR, thisMessages.get(3).logLevel);
         }
@@ -282,9 +312,15 @@ public class LoggerTests {
 
         Assert.assertEquals(2, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+        Assert.assertFalse(Logger.isDebugEnabled());
+        Assert.assertFalse(Logger.isInfoEnabled());
+
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(0).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(1).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(1).logLevel);
     }
