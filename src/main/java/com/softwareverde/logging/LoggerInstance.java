@@ -9,6 +9,26 @@ public class LoggerInstance {
         _class = clazz;
     }
 
+    public boolean isTraceEnabled() {
+        return Logger.isLogLevelEnabled(LogLevel.TRACE, _class);
+    }
+
+    public boolean isDebugEnabled() {
+        return Logger.isLogLevelEnabled(LogLevel.DEBUG, _class);
+    }
+
+    public boolean isInfoEnabled() {
+        return Logger.isLogLevelEnabled(LogLevel.INFO, _class);
+    }
+
+    public boolean isWarnEnabled() {
+        return Logger.isLogLevelEnabled(LogLevel.WARN, _class);
+    }
+
+    public boolean isErrorEnabled() {
+        return Logger.isLogLevelEnabled(LogLevel.ERROR, _class);
+    }
+
     public void trace(final Object message) {
         Logger.log(_log, LogLevel.TRACE, _class, Logger.stringify(message), null);
     }
