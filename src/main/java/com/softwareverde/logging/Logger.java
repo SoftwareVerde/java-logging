@@ -9,10 +9,28 @@ public class Logger {
     protected static final String NULL = "null";
 
     public static LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
-    public static Log LOG = AnnotatedLog.getInstance();
+    public static LogFactory DEFAULT_LOG_FACTORY = (clazz) -> AnnotatedLog.getInstance();
+
+    private static LogFactory LOG_FACTORY = DEFAULT_LOG_FACTORY;
+
+    /**
+     * <p>Sets the log factory by providing a Log object that should always be used, regardless of the class context.</p>
+     * @param log
+     */
+    public static void setLog(final Log log) {
+        LOG_FACTORY = (clazz) -> log;
+    }
+
+    /**
+     * <p>Sets the log factory to be used in future log statements.</p>
+     * @param logFactory
+     */
+    public static void setLogFactory(final LogFactory logFactory) {
+        LOG_FACTORY = logFactory;
+    }
 
     public static LoggerInstance getInstance(final Class<?> clazz) {
-        return new LoggerInstance(clazz);
+        return new LoggerInstance(LOG_FACTORY.newLog(clazz), clazz);
     }
 
     protected static String stringify(final Object object) {
@@ -31,7 +49,11 @@ public class Logger {
     protected static final StackTraceManager _stackTraceManager = new StackTraceManager();
 
     protected static void log(final LogLevel eventLogLevel, final Class<?> callingClass, final String nullableMessage, final Throwable nullableException) {
-        final Log log = Logger.LOG;
+        final Log log = LOG_FACTORY.newLog(callingClass);
+        Logger.log(log, eventLogLevel, callingClass, nullableMessage, nullableException);
+    }
+
+    protected static void log(final Log log, final LogLevel eventLogLevel, final Class<?> callingClass, final String nullableMessage, final Throwable nullableException) {
         if (log == null) { return; }
 
         final LogLevel classLogLevel;
@@ -76,6 +98,40 @@ public class Logger {
         }
     }
 
+    protected static boolean isLogLevelEnabled(final LogLevel loggingThreshold, final Class<?> callingClass) {
+        LogLevel classLogLevel = Logger.getLogLevel(callingClass);
+        if (classLogLevel == null) {
+            classLogLevel = DEFAULT_LOG_LEVEL;
+        }
+        // using opposite order, since we're testing the passed-in threshold against the class's log level
+        return loggingThreshold.isLoggableWithThreshold(classLogLevel);
+    }
+
+    public static boolean isTraceEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.TRACE, callingClass);
+    }
+
+    public static boolean isDebugEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.DEBUG, callingClass);
+    }
+
+    public static boolean isInfoEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.INFO, callingClass);
+    }
+
+    public static boolean isWarnEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.WARN, callingClass);
+    }
+
+    public static boolean isErrorEnabled() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        return Logger.isLogLevelEnabled(LogLevel.ERROR, callingClass);
+    }
+
     public static void setLogLevel(final Class clazz, final LogLevel level) {
         final PackageLevel packageLogLevel = PackageLevel.fromClass(clazz, level);
 
@@ -115,7 +171,8 @@ public class Logger {
      *  In most cases, this operation does nothing.
      */
     public static void flush() {
-        final Log log = Logger.LOG;
+        final Class<?> callingClass = Logger.getCallingClass();
+        final Log log = Logger.LOG_FACTORY.newLog(callingClass);
         if (log == null) { return; }
 
         log.flush();

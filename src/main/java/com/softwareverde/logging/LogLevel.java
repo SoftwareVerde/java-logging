@@ -70,4 +70,12 @@ public enum LogLevel {
     LogLevel(final int value) {
         this.value = value;
     }
+
+    public boolean isLoggableWithThreshold(final LogLevel logLevel) {
+        if (logLevel == OFF) {
+            return false;
+        }
+
+        return this.value >= logLevel.value;
+    }
 }

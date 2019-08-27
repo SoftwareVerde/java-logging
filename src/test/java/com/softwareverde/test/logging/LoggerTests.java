@@ -1,6 +1,7 @@
 package com.softwareverde.test.logging; // Needs to be outside of the com.softwareverde.logging package to trigger the proper stack stace...
 
 import com.softwareverde.logging.Log;
+import com.softwareverde.logging.LogFactory;
 import com.softwareverde.logging.LogLevel;
 import com.softwareverde.logging.Logger;
 import com.softwareverde.logging.log.AnnotatedLog;
@@ -77,21 +78,21 @@ public class LoggerTests {
     }
 
     public static final LogLevel ORIGINAL_LOG_LEVEL = Logger.DEFAULT_LOG_LEVEL;
-    public static final Log ORIGINAL_LOG = Logger.LOG;
+    public static final LogFactory ORIGINAL_LOG_FACTORY = Logger.DEFAULT_LOG_FACTORY;
 
     protected static final String NEWLINE = System.lineSeparator();
 
     @Before
     public void setUp() {
         Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
-        Logger.LOG = ORIGINAL_LOG;
+        Logger.setLogFactory(ORIGINAL_LOG_FACTORY);
         Logger.clearLogLevels();
     }
 
     @After
     public void tearDown() {
         Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
-        Logger.LOG = ORIGINAL_LOG;
+        Logger.setLogFactory(ORIGINAL_LOG_FACTORY);
         Logger.clearLogLevels();
     }
 
@@ -99,7 +100,7 @@ public class LoggerTests {
     public void should_log_messages_with_debug_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.DEBUG;
 
         // Action
@@ -113,15 +114,21 @@ public class LoggerTests {
 
         Assert.assertEquals(4, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+
+        Assert.assertTrue(Logger.isDebugEnabled());
         Assert.assertEquals("DEBUG", messages.get(0).message);
         Assert.assertEquals(LogLevel.DEBUG, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isInfoEnabled());
         Assert.assertEquals("INFO", messages.get(1).message);
         Assert.assertEquals(LogLevel.INFO, messages.get(1).logLevel);
 
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(2).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(2).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(3).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(3).logLevel);
     }
@@ -130,7 +137,7 @@ public class LoggerTests {
     public void should_not_log_messages_below_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
 
         // Action
@@ -144,9 +151,15 @@ public class LoggerTests {
 
         Assert.assertEquals(2, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+        Assert.assertFalse(Logger.isDebugEnabled());
+        Assert.assertFalse(Logger.isInfoEnabled());
+
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(0).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(1).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(1).logLevel);
     }
@@ -155,7 +168,7 @@ public class LoggerTests {
     public void should_not_log_messages_with_OFF_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.OFF;
 
         // Action
@@ -168,13 +181,19 @@ public class LoggerTests {
         final List<DebugLog.Message> messages = debugLog.getMessages();
 
         Assert.assertEquals(0, messages.size());
+
+        Assert.assertFalse(Logger.isTraceEnabled());
+        Assert.assertFalse(Logger.isDebugEnabled());
+        Assert.assertFalse(Logger.isInfoEnabled());
+        Assert.assertFalse(Logger.isWarnEnabled());
+        Assert.assertFalse(Logger.isErrorEnabled());
     }
 
     @Test
     public void should_log_messages_if_package_set_above_default_level() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
 
         Logger.setLogLevel(LoggerTests.class, LogLevel.DEBUG);
@@ -190,15 +209,21 @@ public class LoggerTests {
 
         Assert.assertEquals(4, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+
+        Assert.assertTrue(Logger.isDebugEnabled());
         Assert.assertEquals("DEBUG", messages.get(0).message);
         Assert.assertEquals(LogLevel.DEBUG, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isInfoEnabled());
         Assert.assertEquals("INFO", messages.get(1).message);
         Assert.assertEquals(LogLevel.INFO, messages.get(1).logLevel);
 
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(2).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(2).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(3).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(3).logLevel);
     }
@@ -214,7 +239,7 @@ public class LoggerTests {
         Logger.setLogLevel(LoggerTestsHelper.class, LogLevel.WARN);
 
         // Action
-        Logger.LOG = thisDebugLog;
+        Logger.setLog(thisDebugLog);
         {
             Logger.debug("THIS DEBUG");
             Logger.info("THIS INFO");
@@ -222,7 +247,7 @@ public class LoggerTests {
             Logger.error("THIS ERROR");
         }
 
-        Logger.LOG = helperDebugLog;
+        Logger.setLog(helperDebugLog);
         {
             LoggerTestsHelper.debug("HELPER DEBUG");
             LoggerTestsHelper.info("HELPER INFO");
@@ -235,15 +260,21 @@ public class LoggerTests {
         {
             Assert.assertEquals(4, thisMessages.size());
 
+            Assert.assertFalse(Logger.isTraceEnabled());
+
+            Assert.assertTrue(Logger.isDebugEnabled());
             Assert.assertEquals("THIS DEBUG", thisMessages.get(0).message);
             Assert.assertEquals(LogLevel.DEBUG, thisMessages.get(0).logLevel);
 
+            Assert.assertTrue(Logger.isInfoEnabled());
             Assert.assertEquals("THIS INFO", thisMessages.get(1).message);
             Assert.assertEquals(LogLevel.INFO, thisMessages.get(1).logLevel);
 
+            Assert.assertTrue(Logger.isWarnEnabled());
             Assert.assertEquals("THIS WARN", thisMessages.get(2).message);
             Assert.assertEquals(LogLevel.WARN, thisMessages.get(2).logLevel);
 
+            Assert.assertTrue(Logger.isErrorEnabled());
             Assert.assertEquals("THIS ERROR", thisMessages.get(3).message);
             Assert.assertEquals(LogLevel.ERROR, thisMessages.get(3).logLevel);
         }
@@ -264,7 +295,7 @@ public class LoggerTests {
     public void should_log_messages_if_parent_package_has_lower_log_levels() {
         // Setup
         final DebugLog debugLog = new DebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.OFF;
 
         Logger.setLogLevel(LoggerTestsHelper.class, LogLevel.DEBUG); // NOTE: LoggerTestsHelper is not this class.
@@ -281,9 +312,15 @@ public class LoggerTests {
 
         Assert.assertEquals(2, messages.size());
 
+        Assert.assertFalse(Logger.isTraceEnabled());
+        Assert.assertFalse(Logger.isDebugEnabled());
+        Assert.assertFalse(Logger.isInfoEnabled());
+
+        Assert.assertTrue(Logger.isWarnEnabled());
         Assert.assertEquals("WARN", messages.get(0).message);
         Assert.assertEquals(LogLevel.WARN, messages.get(0).logLevel);
 
+        Assert.assertTrue(Logger.isErrorEnabled());
         Assert.assertEquals("ERROR", messages.get(1).message);
         Assert.assertEquals(LogLevel.ERROR, messages.get(1).logLevel);
     }
@@ -298,7 +335,7 @@ public class LoggerTests {
     public void should_log_messages_from_static_inner_class() {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         final StaticInnerClass staticInnerClass = new StaticInnerClass();
@@ -319,7 +356,7 @@ public class LoggerTests {
     public void should_log_messages_from_anonymous_class() {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         // Action
@@ -343,7 +380,7 @@ public class LoggerTests {
     public void should_log_messages_from_lambda() {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         // Action
@@ -369,7 +406,7 @@ public class LoggerTests {
 
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
-        Logger.LOG = debugLog;
+        Logger.setLog(debugLog);
         Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
 
         final $Ignored$Symbol staticInnerClass = new $Ignored$Symbol();
