@@ -1,5 +1,8 @@
 package com.softwareverde.util;
 
+import com.softwareverde.logging.LogLevel;
+import com.softwareverde.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +94,7 @@ public class MutablePackage implements Package {
         final MutablePackage pkgRoot = pkg._getRoot();
 
         if (! MutablePackage.areEqual(thisRoot._name, pkgRoot._name)) {
-            System.err.println("NOTE: Attempted to add unrelated packages.");
+            Logger.printLoggingError(LogLevel.WARN, this.getClass(), "NOTE: Attempted to add unrelated packages.");
             return;
         }
 
