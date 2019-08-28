@@ -41,7 +41,7 @@ public class SystemLog extends AbstractLog {
         return new Writer() {
             @Override
             public void write(final String string) {
-                printStream.println(string);
+                printStream.print(string); // any desired newlines should be a part of the string
             }
 
             @Override

@@ -165,7 +165,7 @@ public class Logger {
         return Logger.isLogLevelEnabled(LogLevel.ERROR, callingClass);
     }
 
-    public static void setLogLevel(final Class clazz, final LogLevel level) {
+    public static void setLogLevel(final Class<?> clazz, final LogLevel level) {
         final PackageLevel packageLogLevel = PackageLevel.fromClass(clazz, level);
 
         _writeLock.lock();

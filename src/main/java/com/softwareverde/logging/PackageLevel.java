@@ -8,7 +8,7 @@ public class PackageLevel extends MutablePackage {
         return new PackageLevel(null, null);
     }
 
-    public static PackageLevel fromClass(final Class clazz, final LogLevel level) {
+    public static PackageLevel fromClass(final Class<?> clazz, final LogLevel level) {
         final String classPackage = Package.getClassName(clazz);
         return PackageLevel.fromString(classPackage, level);
     }
