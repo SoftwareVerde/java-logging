@@ -23,7 +23,7 @@ class StackTraceManager extends java.lang.SecurityManager {
                 callingClasses[i] = clazz;
             }
             catch (final Exception classNotFoundException) {
-                System.err.println("Log Error: Class not found: " + className);
+                _printError("Class not found: " + className, null);
                 callingClasses[i] = null;
             }
         }
@@ -32,20 +32,32 @@ class StackTraceManager extends java.lang.SecurityManager {
     }
 
     /**
-     * Returns the first non-com.softwareverde.logging class invocation.
+     * Returns the first non-com.softwareverde.logging class invocation or, if such a class could not be identified, Logger.class.
      */
     public final Class<?> getCallingClass() {
-        final Class<?>[] callingClasses = _getCallingClasses();
+        try {
+            final Class<?>[] callingClasses = _getCallingClasses();
 
-        for (int i = 0; i < callingClasses.length; ++i) {
-            final Class<?> callingClass = callingClasses[i];
-            final String packageName = Package.getClassName(callingClass);
-            if (! packageName.startsWith(LOGGING_PACKAGE_NAME)) {
-                return callingClass;
+            for (int i = 0; i < callingClasses.length; ++i) {
+                final Class<?> callingClass = callingClasses[i];
+                if (callingClass != null) {
+                    final String packageName = Package.getClassName(callingClass);
+                    if (! packageName.startsWith(LOGGING_PACKAGE_NAME)) {
+                        return callingClass;
+                    }
+                }
             }
-        }
 
-        return callingClasses[callingClasses.length - 1];
+            final Class<?> topLevelClass = callingClasses[callingClasses.length - 1];
+            if (topLevelClass != null) {
+                return callingClasses[callingClasses.length - 1];
+            }
+            return Logger.class;
+        }
+        catch (final Exception exception) {
+            _printError("Unable to determine calling class", exception);
+            return Logger.class;
+        }
     }
 
     /**
@@ -58,12 +70,18 @@ class StackTraceManager extends java.lang.SecurityManager {
 
         for (int i = 1; i < callingClasses.length; ++i) {
             final Class<?> callingClass = callingClasses[i];
-            final String packageName = Package.getClassName(callingClass);
-            if (! packageName.startsWith(LOGGING_PACKAGE_NAME)) {
-                return (i - 1);
+            if (callingClass != null) {
+                final String packageName = Package.getClassName(callingClass);
+                if (!packageName.startsWith(LOGGING_PACKAGE_NAME)) {
+                    return (i - 1);
+                }
             }
         }
 
         return (callingClasses.length - 2);
+    }
+
+    private void _printError(final String message, final Throwable throwable) {
+        Logger.printLoggingError(LogLevel.ERROR, this.getClass(), message, throwable);
     }
 }

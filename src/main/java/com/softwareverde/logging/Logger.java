@@ -1,6 +1,7 @@
 package com.softwareverde.logging;
 
 import com.softwareverde.logging.log.AnnotatedLog;
+import com.softwareverde.logging.log.SystemLog;
 import com.softwareverde.util.Package;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -29,8 +30,40 @@ public class Logger {
         LOG_FACTORY = logFactory;
     }
 
+    public static void printLoggingError(final LogLevel logLevel, final Class<?> clazz, final String message) {
+        Logger.printLoggingError(logLevel, clazz, message, null);
+    }
+
+    public static void printLoggingError(final LogLevel logLevel, final Class<?> clazz, final String message, final Throwable throwable) {
+        if (Logger.isLogLevelEnabled(logLevel, clazz)) {
+            if (message != null) {
+                System.err.println("Log Error: " + message);
+            }
+            if (throwable != null) {
+                throwable.printStackTrace(System.err);
+            }
+        }
+    }
+
     public static LoggerInstance getInstance(final Class<?> clazz) {
-        return new LoggerInstance(LOG_FACTORY.newLog(clazz), clazz);
+        try {
+            final Log log = LOG_FACTORY.newLog(clazz);
+            final LoggerInstance loggerInstance = new LoggerInstance(log, clazz);
+            return loggerInstance;
+        }
+        catch (final Exception exception) {
+            Logger.printLoggingError(LogLevel.ERROR, Logger.class, "Unable to create log instance with provided class: " + clazz, exception);
+            try {
+                final Log fallbackLogger = LOG_FACTORY.newLog(Logger.class);
+                final LoggerInstance loggerInstance = new LoggerInstance(fallbackLogger, Logger.class);
+                return loggerInstance;
+            }
+            catch (final Exception exception2) {
+                Logger.printLoggingError(LogLevel.ERROR, Logger.class, "Unable to create fallback logger", exception2);
+                final Log systemLog = SystemLog.getInstance();
+                return new LoggerInstance(systemLog, Logger.class);
+            }
+        }
     }
 
     protected static String stringify(final Object object) {
@@ -132,7 +165,7 @@ public class Logger {
         return Logger.isLogLevelEnabled(LogLevel.ERROR, callingClass);
     }
 
-    public static void setLogLevel(final Class clazz, final LogLevel level) {
+    public static void setLogLevel(final Class<?> clazz, final LogLevel level) {
         final PackageLevel packageLogLevel = PackageLevel.fromClass(clazz, level);
 
         _writeLock.lock();
