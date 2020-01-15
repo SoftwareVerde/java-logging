@@ -3,6 +3,9 @@ package com.softwareverde.logging.log;
 import com.softwareverde.logging.LogLevel;
 import com.softwareverde.util.Package;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class AnnotatedLog extends AbstractLog {
     protected static final Object INSTANCE_MUTEX = new Object();
     protected static volatile AnnotatedLog INSTANCE = null;
@@ -37,6 +40,7 @@ public class AnnotatedLog extends AbstractLog {
         return BUFFERED_INSTANCE;
     }
 
+    protected static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
     protected static final String EMPTY_STRING = "";
     protected static final String SEPARATOR = " ";
     protected static final String SEGMENT_LEFT = "[";
@@ -47,7 +51,9 @@ public class AnnotatedLog extends AbstractLog {
     }
 
     protected String _getTimestampAnnotation() {
-        return String.format("%.3f", (System.currentTimeMillis() / 1000D));
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
+        final Date currentTime = new Date();
+        return simpleDateFormat.format(currentTime);
     }
 
     protected String _getClassAnnotation(final Class<?> callingClass) {

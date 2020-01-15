@@ -1,9 +1,6 @@
 package com.softwareverde.test.logging; // Needs to be outside of the com.softwareverde.logging package to trigger the proper stack stace...
 
-import com.softwareverde.logging.Log;
-import com.softwareverde.logging.LogFactory;
-import com.softwareverde.logging.LogLevel;
-import com.softwareverde.logging.Logger;
+import com.softwareverde.logging.*;
 import com.softwareverde.logging.log.AnnotatedLog;
 import org.junit.After;
 import org.junit.Assert;
@@ -84,14 +81,14 @@ public class LoggerTests {
 
     @Before
     public void setUp() {
-        Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
+        Logger.setLogLevel(ORIGINAL_LOG_LEVEL);
         Logger.setLogFactory(ORIGINAL_LOG_FACTORY);
         Logger.clearLogLevels();
     }
 
     @After
     public void tearDown() {
-        Logger.DEFAULT_LOG_LEVEL = ORIGINAL_LOG_LEVEL;
+        Logger.setLogLevel(ORIGINAL_LOG_LEVEL);
         Logger.setLogFactory(ORIGINAL_LOG_FACTORY);
         Logger.clearLogLevels();
     }
@@ -101,7 +98,7 @@ public class LoggerTests {
         // Setup
         final DebugLog debugLog = new DebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.DEBUG;
+        Logger.setLogLevel(LogLevel.DEBUG);
 
         // Action
         Logger.debug("DEBUG");
@@ -138,7 +135,7 @@ public class LoggerTests {
         // Setup
         final DebugLog debugLog = new DebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
+        Logger.setLogLevel(LogLevel.WARN);
 
         // Action
         Logger.debug("DEBUG");
@@ -169,7 +166,7 @@ public class LoggerTests {
         // Setup
         final DebugLog debugLog = new DebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.OFF;
+        Logger.setLogLevel(LogLevel.OFF);
 
         // Action
         Logger.debug("DEBUG");
@@ -194,7 +191,7 @@ public class LoggerTests {
         // Setup
         final DebugLog debugLog = new DebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
+        Logger.setLogLevel(LogLevel.WARN);
 
         Logger.setLogLevel(LoggerTests.class, LogLevel.DEBUG);
 
@@ -233,7 +230,7 @@ public class LoggerTests {
         // Setup
         final DebugLog thisDebugLog = new DebugLog();
         final DebugLog helperDebugLog = new DebugLog();
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.WARN;
+        Logger.setLogLevel(LogLevel.WARN);
 
         Logger.setLogLevel(LoggerTests.class, LogLevel.DEBUG);
         Logger.setLogLevel(LoggerTestsHelper.class, LogLevel.WARN);
@@ -296,7 +293,7 @@ public class LoggerTests {
         // Setup
         final DebugLog debugLog = new DebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.OFF;
+        Logger.setLogLevel(LogLevel.OFF);
 
         Logger.setLogLevel(LoggerTestsHelper.class, LogLevel.DEBUG); // NOTE: LoggerTestsHelper is not this class.
         Logger.setLogLevel("com.softwareverde", LogLevel.WARN);
@@ -336,7 +333,7 @@ public class LoggerTests {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+        Logger.setLogLevel(LogLevel.ON);
 
         final StaticInnerClass staticInnerClass = new StaticInnerClass();
 
@@ -357,7 +354,7 @@ public class LoggerTests {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+        Logger.setLogLevel(LogLevel.ON);
 
         // Action
         (new Runnable() {
@@ -381,7 +378,7 @@ public class LoggerTests {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+        Logger.setLogLevel(LogLevel.ON);
 
         // Action
         final Runnable lambda = (() -> {
@@ -407,7 +404,7 @@ public class LoggerTests {
         // Setup
         final AnnotatedDebugLog debugLog = new AnnotatedDebugLog();
         Logger.setLog(debugLog);
-        Logger.DEFAULT_LOG_LEVEL = LogLevel.ON;
+        Logger.setLogLevel(LogLevel.ON);
 
         final $Ignored$Symbol staticInnerClass = new $Ignored$Symbol();
 
@@ -421,5 +418,20 @@ public class LoggerTests {
 
         final String message = messages.get(0);
         Assert.assertTrue(message.endsWith(" [com.softwareverde.test.logging.LoggerTests.StaticInnerClass] Message." + NEWLINE));
+    }
+
+    @Test
+    public void should_log_simple_messages_with_instance() {
+        // Setup
+        Logger.setLogLevel(Logger.DEFAULT_LOG_LEVEL);
+        Logger.setLogFactory(Logger.DEFAULT_LOG_FACTORY);
+
+        // Action
+        LoggerInstance logger = Logger.getInstance(getClass());
+        logger.trace("Test trace message");
+        logger.debug("Test debug message");
+        logger.info("Test info message.");
+        logger.warn("Test warn message.", new Exception());
+        logger.error("Test error message", new Exception());
     }
 }

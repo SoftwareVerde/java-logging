@@ -9,9 +9,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Logger {
     protected static final String NULL = "null";
 
-    public static LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
-    public static LogFactory DEFAULT_LOG_FACTORY = (clazz) -> AnnotatedLog.getInstance();
+    public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
+    public static final LogFactory DEFAULT_LOG_FACTORY = (clazz) -> AnnotatedLog.getInstance();
 
+    private static LogLevel LOG_LEVEL = DEFAULT_LOG_LEVEL;
     private static LogFactory LOG_FACTORY = DEFAULT_LOG_FACTORY;
 
     /**
@@ -93,7 +94,7 @@ public class Logger {
         _readLock.lock();
         try {
             final LogLevel nullableClassLogLevel = _rootPackage.getLogLevel(Package.getClassName(callingClass));
-            classLogLevel = (nullableClassLogLevel == null ? DEFAULT_LOG_LEVEL : nullableClassLogLevel);
+            classLogLevel = (nullableClassLogLevel == null ? LOG_LEVEL : nullableClassLogLevel);
         }
         finally {
             _readLock.unlock();
@@ -134,7 +135,7 @@ public class Logger {
     protected static boolean isLogLevelEnabled(final LogLevel loggingThreshold, final Class<?> callingClass) {
         LogLevel classLogLevel = Logger.getLogLevel(callingClass);
         if (classLogLevel == null) {
-            classLogLevel = DEFAULT_LOG_LEVEL;
+            classLogLevel = LOG_LEVEL;
         }
         // using opposite order, since we're testing the passed-in threshold against the class's log level
         return loggingThreshold.isLoggableWithThreshold(classLogLevel);
@@ -163,6 +164,14 @@ public class Logger {
     public static boolean isErrorEnabled() {
         final Class<?> callingClass = Logger.getCallingClass();
         return Logger.isLogLevelEnabled(LogLevel.ERROR, callingClass);
+    }
+
+    /**
+     * <p>Sets the fallback log level threshold for when a class-specific log level is not set.</p>
+     * @param logLevel
+     */
+    public static void setLogLevel(final LogLevel logLevel) {
+        LOG_LEVEL = logLevel;
     }
 
     public static void setLogLevel(final Class<?> clazz, final LogLevel level) {
