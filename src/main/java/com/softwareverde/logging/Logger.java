@@ -10,17 +10,27 @@ public class Logger {
     protected static final String NULL = "null";
 
     public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
-    public static final LogFactory DEFAULT_LOG_FACTORY = (clazz) -> AnnotatedLog.getInstance();
+    public static final LogFactory DEFAULT_LOG_FACTORY = new LogFactory() {
+        @Override
+        public Log newLog(final Class<?> clazz) {
+            return AnnotatedLog.getInstance();
+        }
+    };
 
-    private static LogLevel LOG_LEVEL = DEFAULT_LOG_LEVEL;
-    private static LogFactory LOG_FACTORY = DEFAULT_LOG_FACTORY;
+    protected static LogLevel LOG_LEVEL = DEFAULT_LOG_LEVEL;
+    protected static LogFactory LOG_FACTORY = DEFAULT_LOG_FACTORY;
 
     /**
      * <p>Sets the log factory by providing a Log object that should always be used, regardless of the class context.</p>
      * @param log
      */
     public static void setLog(final Log log) {
-        LOG_FACTORY = (clazz) -> log;
+        LOG_FACTORY = new LogFactory() {
+            @Override
+            public Log newLog(final Class<?> clazz) {
+                return log;
+            }
+        };
     }
 
     /**
@@ -49,15 +59,13 @@ public class Logger {
     public static LoggerInstance getInstance(final Class<?> clazz) {
         try {
             final Log log = LOG_FACTORY.newLog(clazz);
-            final LoggerInstance loggerInstance = new LoggerInstance(log, clazz);
-            return loggerInstance;
+            return new LoggerInstance(log, clazz);
         }
         catch (final Exception exception) {
             Logger.printLoggingError(LogLevel.ERROR, Logger.class, "Unable to create log instance with provided class: " + clazz, exception);
             try {
                 final Log fallbackLogger = LOG_FACTORY.newLog(Logger.class);
-                final LoggerInstance loggerInstance = new LoggerInstance(fallbackLogger, Logger.class);
-                return loggerInstance;
+                return new LoggerInstance(fallbackLogger, Logger.class);
             }
             catch (final Exception exception2) {
                 Logger.printLoggingError(LogLevel.ERROR, Logger.class, "Unable to create fallback logger", exception2);
@@ -218,6 +226,18 @@ public class Logger {
         if (log == null) { return; }
 
         log.flush();
+    }
+
+    /**
+     * Closes the log, if the log supports closing.
+     *  In most cases, this operation does nothing.
+     */
+    public static void close() {
+        final Class<?> callingClass = Logger.getCallingClass();
+        final Log log = Logger.LOG_FACTORY.newLog(callingClass);
+        if (log == null) { return; }
+
+        log.close();
     }
 
     // TRACE
