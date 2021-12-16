@@ -1,7 +1,12 @@
 package com.softwareverde.test.logging; // Needs to be outside of the com.softwareverde.logging package to trigger the proper stack stace...
 
-import com.softwareverde.logging.*;
+import com.softwareverde.logging.Log;
+import com.softwareverde.logging.LogFactory;
+import com.softwareverde.logging.LogLevel;
+import com.softwareverde.logging.Logger;
+import com.softwareverde.logging.LoggerInstance;
 import com.softwareverde.logging.log.AnnotatedLog;
+import com.softwareverde.logging.log.SystemLog;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,6 +40,12 @@ public class LoggerTests {
 
         public List<Message> getMessages() {
             return _messages;
+        }
+    }
+
+    static class StaticInnerClass {
+        void log(final String message) {
+            Logger.info(message);
         }
     }
 
@@ -322,12 +333,6 @@ public class LoggerTests {
         Assert.assertEquals(LogLevel.ERROR, messages.get(1).logLevel);
     }
 
-    static class StaticInnerClass {
-        void log(final String message) {
-            Logger.info(message);
-        }
-    }
-
     @Test
     public void should_log_messages_from_static_inner_class() {
         // Setup
@@ -433,5 +438,49 @@ public class LoggerTests {
         logger.info("Test info message.");
         logger.warn("Test warn message.", new Exception());
         logger.error("Test error message", new Exception());
+    }
+
+    @Test
+    public void should_static_log_simple_messages_dynamic_log_level() {
+        // Setup
+        Logger.setLogLevel(LogLevel.ON);
+        Logger.setLog(new AnnotatedLog(SystemLog.wrapSystemStream(System.out), SystemLog.wrapSystemStream(System.err)) {
+            @Override
+            protected String _getLogLevelAnnotation(final LogLevel logLevel) {
+                return logLevel.name();
+            }
+        });
+
+        // Action
+        Logger.log(LogLevel.TRACE, "Test trace message");
+        Logger.log(LogLevel.DEBUG, "Test debug message");
+        Logger.log(LogLevel.INFO, "Test info message.");
+        Logger.log(LogLevel.WARN, "Test warn message.", new Exception());
+        Logger.log(LogLevel.ERROR, "Test error message", new Exception());
+    }
+
+    @Test
+    public void should_log_simple_messages_dynamic_log_level() {
+        // Setup
+        Logger.setLogLevel(LogLevel.ON);
+        Logger.setLogFactory(new LogFactory() {
+            @Override
+            public Log newLog(final Class<?> clazz) {
+                return new AnnotatedLog(SystemLog.wrapSystemStream(System.out), SystemLog.wrapSystemStream(System.err)) {
+                    @Override
+                    protected String _getLogLevelAnnotation(final LogLevel logLevel) {
+                        return logLevel.name();
+                    }
+                };
+            }
+        });
+
+        // Action
+        LoggerInstance logger = Logger.getInstance(getClass());
+        logger.log(LogLevel.TRACE, "Test trace message");
+        logger.log(LogLevel.DEBUG, "Test debug message");
+        logger.log(LogLevel.INFO, "Test info message.");
+        logger.log(LogLevel.WARN, "Test warn message.", new Exception());
+        logger.log(LogLevel.ERROR, "Test error message", new Exception());
     }
 }

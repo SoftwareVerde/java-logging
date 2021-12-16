@@ -240,6 +240,21 @@ public class Logger {
         log.close();
     }
 
+    public static void log(final LogLevel logLevel, final Object message) {
+        final Class<?> callingClass = Logger.getCallingClass();
+        Logger.log(logLevel, callingClass, Logger.stringify(message), null);
+    }
+
+    public static void log(final LogLevel logLevel, final Throwable exception) {
+        final Class<?> callingClass = Logger.getCallingClass();
+        Logger.log(logLevel, callingClass, null, exception);
+    }
+
+    public static void log(final LogLevel logLevel, final String message, final Throwable exception) {
+        final Class<?> callingClass = Logger.getCallingClass();
+        Logger.log(logLevel, callingClass, Logger.stringify(message), exception);
+    }
+
     // TRACE
 
     public static void trace(final Object message) {

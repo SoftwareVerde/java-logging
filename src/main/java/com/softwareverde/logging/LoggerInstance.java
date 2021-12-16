@@ -29,6 +29,18 @@ public class LoggerInstance {
         return Logger.isLogLevelEnabled(LogLevel.ERROR, _class);
     }
 
+    public void log(final LogLevel logLevel, final Object message) {
+        Logger.log(_log, logLevel, _class, Logger.stringify(message), null);
+    }
+
+    public void log(final LogLevel logLevel, final Throwable exception) {
+        Logger.log(_log, logLevel, _class, null, exception);
+    }
+
+    public void log(final LogLevel logLevel, final String message, final Throwable exception) {
+        Logger.log(_log, logLevel, _class, Logger.stringify(message), exception);
+    }
+
     public void trace(final Object message) {
         Logger.log(_log, LogLevel.TRACE, _class, Logger.stringify(message), null);
     }

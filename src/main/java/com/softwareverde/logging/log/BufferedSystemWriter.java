@@ -1,6 +1,10 @@
 package com.softwareverde.logging.log;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 
 public class BufferedSystemWriter implements AbstractLog.Writer {
